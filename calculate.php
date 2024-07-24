@@ -13,9 +13,9 @@
 
         <?php
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $voltage = $_POST['voltage'];
-            $current = $_POST['current'];
-            $rate = $_POST['rate'];
+            $voltage = isset($_POST['voltage']) ? $_POST['voltage'] : 0;
+            $current = isset($_POST['current']) ? $_POST['current'] : 0;
+            $rate = isset($_POST['rate']) ? $_POST['rate'] : 0;
 
             $power = $voltage * $current; // Power in Watts
             $energy_per_hour = $power / 1000; // Energy in kWh
@@ -31,6 +31,8 @@
             echo "<p><strong>Total Charge per Hour ($):</strong> {$total_per_hour}</p>";
             echo "<p><strong>Total Charge per Day ($):</strong> {$total_per_day}</p>";
             echo "</div>";
+        } else {
+            echo "<p class='text-danger'>Invalid request method. Please submit the form.</p>";
         }
         ?>
 
