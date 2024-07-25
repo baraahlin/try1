@@ -1,30 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Electricity Calculator</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container mt-5">
-        <h1 class="text-center">Electricity Calculator</h1>
-        <form method="POST" action="calculate.php">
-            <div class="form-group">
-                <label for="voltage">Voltage (V)</label>
-                <input type="number" class="form-control" id="voltage" name="voltage" step="0.01" required>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <title>Energy Calculator</title>
+        <meta name="author" content="Baraah Ali">
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .container {
+                max-width: 600px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container mt-5">
+            <h1 class="text-center"> Electricity Calculator </h1>
+            <form method="POST" action="" id="myForm" onSubmit="calculate();">
+                <div class="form-group">
+                    <label for="voltage">Voltage : </label>
+                    <input type="number" id="voltage" class="form-control" step="0.01" required>
+                    <p>Voltage (V)</p>
+                </div>
+                <div class="form-group">
+                    <label for="current">Current : </label>
+                    <input type="number" id="current" name="current" step="0.01" class="form-control" required>
+                    <p>Current (A)</p>
+                </div>
+                <div class="form-group">
+                    <label for="rate">Current Rate : </label>
+                    <input type="number" id="rate" name="rate" step="0.01" class="form-control" required>
+                    <p>sen/kWh</p>
+                </div>
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-primary" id="target_display">Calculate</button>
+                </div>
+            </form>
+        </div>
+        <div class="container mt-5" id="resultCard" style="display: none;">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h5 class="card-title" style="color:blue" id="powerDisplay">POWER : </h5>
+                    <h5 class="card-title" style="color:blue" id="outputRateDisplay">RATE : </h5>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="current">Current (A)</label>
-                <input type="number" class="form-control" id="current" name="current" step="0.01" required>
-            </div>
-            <div class="form-group">
-                <label for="rate">Current Rate (cents/kWh)</label>
-                <input type="number" class="form-control" id="rate" name="rate" step="0.01" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Calculate</button>
-        </form>
-    </div>
-</body>
+        </div>
+        <div class="container mt-4 " id="resultTable" style="display: none;">
+            <table class="table table-bordered table-hover display">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Hour</th>
+                    <th>Energy (kWh)</th>
+                    <th>Total (RM)</th>
+                </tr>
+            </thead>
+            <tbody id="resultBody">
+                </tbody>
+        </table>
+        </div>
+    <script>
+            document.getElementById("myForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+                calculate();
+            });
+
+            function calculate() {
+                const voltage = parseFloat(document.getElementById('voltage').value);
+                const current = parseFloat(document.getElementById('current').value);
+                const rate = parseFloat(document.getElementById('rate').value);
+
+                const outputRate = rate / 100;
+                document.getElementById('outputRateDisplay').innerText = "RATE: " + outputRate.toFixed(3) + " RM";
+
+                const power = voltage * current;
+                const power_display = power/1000; //have it in kwh
+                document.getElementById('powerDisplay').innerText = "POWER: " + power_display.toFixed(5) + " kW";
+
+                let tableBody = "";
+                for (let hour = 1; hour <= 10; hour++) {
+                    const energy = (power * hour) / 1000;
+                    const total = energy * outputRate;
+
+                    tableBody += `<tr>
+                        <td><strong>${hour}</strong></td>
+                        <td>${hour}</td>
+                        <td>${energy.toFixed(5)}</td>
+                        <td>${total.toFixed(2)}</td>
+                    </tr>`;
+                }
+                document.getElementById('resultBody').innerHTML = tableBody;
+
+                document.getElementById('resultCard').style.display = "block";
+                document.getElementById('resultTable').style.display = "block";
+            }
+        </script>
+    </body>
 </html>
